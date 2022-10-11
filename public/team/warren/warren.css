@@ -1,0 +1,17 @@
+*{
+	font-family:helvetica;
+
+}
+body{
+	background-color:#bababa;
+}
+div.main{
+	margin:20px;
+	padding:15px;
+	width:50%;
+	background-color:#efefef;
+	border:4px solid #333333;
+	border-radius:15px;
+	
+		color:#0006633;
+}
