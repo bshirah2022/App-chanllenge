@@ -77,7 +77,7 @@ SQL;
 			
 			$sql=<<<SQL
 SELECT * FROM $tablename
-LIMIT $record_start,$perpage
+LIMIT $record_start,$rowsperpage
 SQL;
 			$res = dbQuery($sql,$link);
 			while($row = mysqli_fetch_assoc($res)){
