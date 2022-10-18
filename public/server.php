@@ -70,8 +70,9 @@ SQL;
 			$rows = array();
 			$tablename = dbEscape($_REQUEST['tablename'],$link);
 			
-			$sql='DESCRIBE $tablename';
-	
+			$sql=<<<SQL
+DESCRIBE $tablename
+SQL;
 			$res = dbQuery($sql,$link);
 			while($row = mysqli_fetch_assoc($res)){
 				array_push($rows,$row);
