@@ -32,16 +32,21 @@
 	    )
 	);
 	
-	$actions['update_rows'] = array(
-	    'description' => 'update rows in the specified table', 
+	$actions['update_row'] = array(
+	    'description' => 'update a single row in the specified table', 
 	    'required' => array(
 		'tablename' => 'name of the requested table',
-		'record'=>'json encoded array representing the fields to be updated',
-		'colname'=>'name of the column to match for updating',
-		'colvalue'=>'value of the column to match for updating'
+		'record'=>'json encoded keyed array representing the fields to be updated and their values'
 	    )
 	);
 	
+	$actions['update_rows'] = array(
+	    'description' => 'update multiple rows in the requested table', 
+	    'required' => array(
+		'tablename' => 'name of the requested table',
+		'records'=>'json encoded array of records, each of which is a keyed array representing the fields to be updated and their values'
+	    )
+	);
 	
 	if(isset($_REQUEST['action'])){
 	
@@ -61,6 +66,18 @@ SQL;
 			}
 			echo json_encode($rows);
 			
+		}elseif($reqaction=='get_columns'){
+			$rows = array();
+			$tablename = dbEscape($_REQUEST['tablename'],$link);
+			
+			$sql='DESCRIBE $tablename'
+	
+			$res = dbQuery($sql,$link);
+			while($row = mysqli_fetch_assoc($res)){
+				array_push($rows,$row);
+			}
+			echo json_encode($rows);
+
 		}elseif($reqaction=='get_rows'){
 			$rows = array();
 			$tablename = dbEscape($_REQUEST['tablename'],$link);
