@@ -2,7 +2,9 @@
 	
 	require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_dbfunctions.php');
 	$link = dbConnect();
-	$http_root_dir = 'https://'.$_SERVER['HTTP_HOST'].'/';
+	
+	//NOTE: use relative path links, not direct links which were causing timeouts on AWS
+	//$http_root_dir = 'https://'.$_SERVER['HTTP_HOST'].'/';
 ?>
 
 
@@ -14,8 +16,8 @@
 		<meta charset="UTF-8">
 		<title>CPT App Challenge - Null Pointers</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<script type="text/javascript" src="<?php echo $http_root_dir ?>common/js/common.js"></script>
-		<link rel="stylesheet" href="<?php echo $http_root_dir ?>common/css/common.css">
+		<script type="text/javascript" src="/common/js/common.js"></script>
+		<link rel="stylesheet" href="/common/css/common.css">
 		<script type='text/javascript'>
 		</script>
 	</head>
