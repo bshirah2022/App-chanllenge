@@ -1,6 +1,6 @@
 <?
 
-$global_dbhost = 'awseb-e-t3saksyrk4-stack-awsebrdsdatabase-fvuoqwcrsjgo.c1vubnbtokjo.us-west-2.rds.amazonaws.com';
+require_once('inc_prodswitch.php');
 $global_dbuser = 'cptnullpointers';
 $global_dbpass = 'DBpass4pointers!';
 $global_dbname = 'npdb';
