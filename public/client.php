@@ -21,14 +21,16 @@
 		<script type="text/javascript" src="/common/js/common.js"></script>
 		<link rel="stylesheet" href="/common/css/common.css">
 		<script type='text/javascript'>
+			var lastResponse;
+			
 			function bodyOnLoad(){
-				var params = array();
-				params['action'] = 'get_tables';
-				ajaxRequest('server.php',receiveServerResponse);
+				var params = "action=get_tables";
+				ajaxRequest('server.php',receiveServerResponse,params);
 				
 			}
 			
 			function receiveServerResponse(responseText){
+				lastResponse = responseText;
 				console.log(responseText);
 			}
 		</script>
