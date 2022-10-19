@@ -3,6 +3,8 @@
 	require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_dbfunctions.php');
 	$link = dbConnect();
 	
+	$client_table = 'team'; 
+	
 	//NOTE: use relative path links, not direct links which were causing timeouts on AWS
 	//$http_root_dir = 'https://'.$_SERVER['HTTP_HOST'].'/';
 ?>
@@ -19,9 +21,19 @@
 		<script type="text/javascript" src="/common/js/common.js"></script>
 		<link rel="stylesheet" href="/common/css/common.css">
 		<script type='text/javascript'>
+			function bodyOnLoad(){
+				var params = array();
+				params['action'] = 'get_tables';
+				ajaxRequest('server.php',receiveServerResponse);
+				
+			}
+			
+			function receiveServerResponse(responseText){
+				console.log(responseText);
+			}
 		</script>
 	</head>
-	<body>
+	<body onLoad="javascript:bodyOnLoad();">
 		test client. <span class="hidden">hidden span</span>
 	</body>
 </html>
