@@ -11,14 +11,16 @@
 	$actions['get_tables'] = array(
 	    'description' => 'list all tables in the database', 
 	    'required' => array(
-	    )
+	    ),
+	    'example'=>'server.php?action=get_tables'
 	);
 	
 	$actions['get_columns'] = array(
 	    'description' => 'list all columns in the specified table', 
 	    'required' => array(
 		'tablename' => 'name of the requested table'
-	    )
+	    ),
+	    'example'=>'server.php?action=get_columns&tablename=team'
 	);
 	
 	$actions['get_rows'] = array(
@@ -29,7 +31,8 @@
 	    'optional' => array(
 		'page'=>'which page/set of records to retrieve (default:1)',
 		'rowsperpage'=>'how many records to retrieve per page (default:10)'
-	    )
+	    ),
+	     'example'=>'server.php?action=get_rows&tablename=team&page=1&rowsperpage=2'
 	);
 	
 	$actions['update_row'] = array(
@@ -124,7 +127,11 @@ SQL;
 						echo '<br />';
 					}
 				}else{
-					echo $value.'<br />';
+					if($key=='example'){
+						echo '<a href="'.$value.'">'.$value.'</a>';
+					}else{
+						echo $value.'<br />';
+					}
 				}
 			}
 			
