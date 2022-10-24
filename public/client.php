@@ -36,7 +36,7 @@
 		</script>
 	</head>
 	<body onLoad="javascript:bodyOnLoad();">
-		test client. <span class="hidden">hidden span</span>
+		test client 2. <span class="hidden">hidden span</span>
 	</body>
 </html>
 
