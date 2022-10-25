@@ -3,3 +3,4 @@ App-chanllenge.zip
 include/inc_prodswitch.php
 public/dbadmin/config.inc.php
 public/dbadmin/config.inc.prod.php
+public/dbadmin/config.inc.php
