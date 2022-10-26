@@ -1,6 +1,6 @@
 <?php
 	require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_dbfunctions.php');
-	
+	header("Access-Control-Allow-Origin: *");
 	$link = dbConnect();
 	
 	$actions = array();
@@ -22,7 +22,7 @@
 	    ),
 	    'example'=>'server.php?action=get_columns&tablename=team'
 	);
-	
+ 
 	$colencode = 'server.php?action=get_rows&tablename=team&conditions='.urlencode('[{"col":"fname","op":"like","val":"%arre%"}]');
 	$actions['get_rows'] = array(
 	    'description' => 'get rows in the specified table', 
@@ -55,6 +55,7 @@
 	
 	$insertencode1 = 'server.php?action=insert_row&tablename=team&row='.urlencode('[{"col":"fname","val":"Matt"},{"col":"lname","val":"Riley"}]');
 	$insertencode2 = 'server.php?action=insert_row&tablename=team&row='.urlencode('[{"col":"fname","val":"Alphius"},{"col":"lname","val":"McConnell"}]');
+	$insertencode3 = 'server.php?action=insert_row&tablename=user&row='.urlencode('[{"col":"phone","val":"1-900-867-5309"},{"col":"email","val":"junk@uswoods.net"},{"password":"12345"}]');
 	$actions['insert_row'] = array(
 	    'description' => 'Insert a row in the requested table', 
 	    'required' => array(
