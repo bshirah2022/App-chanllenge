@@ -55,6 +55,7 @@
 	
 	$insertencode1 = 'server.php?action=insert_row&tablename=team&row='.urlencode('[{"col":"fname","val":"Matt"},{"col":"lname","val":"Riley"}]');
 	$insertencode2 = 'server.php?action=insert_row&tablename=team&row='.urlencode('[{"col":"fname","val":"Alphius"},{"col":"lname","val":"McConnell"}]');
+	$insertencode3 = 'server.php?action=insert_row&tablename=user&row='.urlencode('[{"col":"phone","val":"1-900-867-5309"},{"col":"email","val":"junk@uswoods.net"},{"password":"12345"}]');
 	$actions['insert_row'] = array(
 	    'description' => 'Insert a row in the requested table', 
 	    'required' => array(
@@ -278,13 +279,8 @@ SQL;
 				echo '["failure"]';
 			}
 		}elseif($reqaction=="upload"){
-			$fileinfo = ''.count($_FILES).': '.var_export($_FILES,true);
-			
 			$target_dir = "/../upload/";
-			echo ("request: <br />");
-			echo var_export($_REQUEST, true);
-			echo ("<br />files: <br />");
-			echo $fileinfo;
+			var_dump($_FILES);
 			/*
 			$target_file = $target_dir . basename($_FILES["upfile"]["name"]);
 			if (move_uploaded_file($_FILES["upfile"]["tmp_name"], $target_file)) {
@@ -328,7 +324,7 @@ SQL;
 		echo '<div style="background-color:#f8f8f8; border:2px solid black; margin-bottom:40px; border-radius:10px; padding:6px; padding-left:12px;">';
 		echo '<h2>File Upload</h2>';
 ?>
-		<form enctype="multipart/form-data" method="post" action="/upload.php">
+		<form method="post" action="/server.php">
 			<input type="file" id="upfile" name="upfile"><br /><br />
 			<input type="hidden" name="action" value="upload">
 			<input type="submit" value="submit">
