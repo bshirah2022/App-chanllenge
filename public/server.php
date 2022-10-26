@@ -147,9 +147,19 @@ SQL;
 				}
 			}
 			
+			$orderby='';
+			if(isset($_REQUEST['orderby'])){
+				//allow alphanumeric, -, _, [space]
+				if(preg_match('/^[\w\-,\s]+$/',$_REQUEST['orderby'])){
+					$orderby=(' ORDER BY '.$_REQUEST['orderby']);
+				}
+			}
+			
+			
 			$sql=<<<SQL
 SELECT * FROM $tablename
 WHERE $conditions
+$orderby
 LIMIT $record_start,$rowsperpage
 SQL;
 			$res = dbQuery($sql,$link);
@@ -200,9 +210,9 @@ WHERE $conditions
 SQL;
 			$res = dbQuery($sql,$link);
 			if($res){
-				echo "success";
+				echo '["success"]';
 			}else{
-				echo"error";
+				echo '["failure"]';
 			}
 		}elseif($reqaction=='insert_row'){
 			$tablename = dbEscape($_REQUEST['tablename'],$link);
@@ -230,9 +240,9 @@ SQL;
 			//echo $sql;
 			$res = dbQuery($sql,$link);
 			if($res){
-				echo "success";
+				echo '["success"]';
 			}else{
-				echo"error";
+				echo '["failure"]';
 			}
 			
 		}elseif($reqaction=='delete_rows'){
@@ -263,17 +273,28 @@ SQL;
 			//echo $sql;
 			$res = dbQuery($sql,$link);
 			if($res){
-				echo "success";
+				echo '["success"]';
 			}else{
-				echo"error";
+				echo '["failure"]';
 			}
+		}elseif($reqaction=="upload"){
+			$target_dir = "/../upload/";
+			var_dump($_FILES);
+			/*
+			$target_file = $target_dir . basename($_FILES["upfile"]["name"]);
+			if (move_uploaded_file($_FILES["upfile"]["tmp_name"], $target_file)) {
+				echo '["success"]';
+			} else {
+				echo '["failure"]';
+			}
+			*/
 		}
 		
 	}else{
 		require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_genericBodyStart.php');
 		echo '<h2>Services</h2>';
 		foreach ($actions as $action => $info){
-			echo '<div style="background-color:#f8f8f8; border:2px solid black; margin-bottom:20px; border-radius:10px; padding:6px;">';
+			echo '<div style="background-color:#f8f8f8; border:2px solid black; margin-bottom:40px; border-radius:10px; padding:6px; padding-left:12px;">';
 			echo '<h2>'.$action.'</h2>';
 			foreach ($info as $key => $value){
 				echo '<b>'.$key.':</b> ';
@@ -299,6 +320,17 @@ SQL;
 			echo '</div>';
 			
 		}
+		echo '<div style="background-color:#f8f8f8; border:2px solid black; margin-bottom:40px; border-radius:10px; padding:6px; padding-left:12px;">';
+		echo '<h2>File Upload</h2>';
+?>
+		<form method="post" action="/server.php">
+			<input type="file" id="upfile" name="upfile"><br /><br />
+			<input type="hidden" name="action" value="upload">
+			<input type="submit" value="submit">
+		</form>
+<?
+		echo '</div>';
+		
 		
 		require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_genericBodyEnd.php');
 	}
