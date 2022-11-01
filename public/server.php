@@ -55,7 +55,7 @@
 	
 	$insertencode1 = 'server.php?action=insert_row&tablename=team&row='.urlencode('[{"col":"fname","val":"Matt"},{"col":"lname","val":"Riley"}]');
 	$insertencode2 = 'server.php?action=insert_row&tablename=team&row='.urlencode('[{"col":"fname","val":"Alphius"},{"col":"lname","val":"McConnell"}]');
-	$insertencode3 = 'server.php?action=insert_row&tablename=user&row='.urlencode('[{"col":"phone","val":"1-900-867-5309"},{"col":"email","val":"junk@uswoods.net"},{"password":"12345"}]');
+	$insertencode3 = 'server.php?action=insert_row&tablename=user&row='.urlencode('[{"col":"phone","val":"1-900-867-5309"},{"col":"username","val":"junkuser"},{"col":"email","val":"junk@uswoods.net"},{"col":"password","val":"12345"}]');
 	$actions['insert_row'] = array(
 	    'description' => 'Insert a row in the requested table', 
 	    'required' => array(
@@ -63,7 +63,8 @@
 		'row'=>'json encoded array of [col]umns to be inserted with [val]ues'
 	    ),
 		'example 1: insert Matt Riley'=>$insertencode1,
-		'example 2: insert Alphius McConnell'=>$insertencode2
+		'example 2: insert Alphius McConnell'=>$insertencode2,
+		'example 3: insert into user table'=>$insertencode3
 	);
 	
 	//tablename, updates (col, val), conditions (col, op, val)
