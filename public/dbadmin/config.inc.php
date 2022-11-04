@@ -30,6 +30,10 @@ $cfg['Servers'][$i]['auth_type'] = 'cookie';
 /* Server parameters */
 /* DEV host */
 $cfg['Servers'][$i]['host'] = 'awseb-e-8q2ig3hx3g-stack-awsebrdsdatabase-7kzemkz3czx1.cronbgebvnmf.us-west-2.rds.amazonaws.com';
+/* PROD host */
+/*
+$cfg['Servers'][$i]['host'] = 'awseb-e-t3saksyrk4-stack-awsebrdsdatabase-fvuoqwcrsjgo.c1vubnbtokjo.us-west-2.rds.amazonaws.com';
+*/
 $cfg['Servers'][$i]['compress'] = false;
 $cfg['Servers'][$i]['AllowNoPassword'] = false;
 
