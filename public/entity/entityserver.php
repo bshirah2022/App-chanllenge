@@ -1,15 +1,13 @@
 <?php
+	
 	require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_dbfunctions.php');
+	require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_dbconnect.php');
 	require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_login.php');
 	header('Access-Control-Allow-Origin: *');
 	
 	$require_login = true;
-	$link = dbConnect();
 	
-	
-	
-	
-	
+
 
 	$entitytable = "task";
 	$entitycols = [];
@@ -33,7 +31,7 @@
 	}
 	
 	
-	dbDisconnect($link);
+	dbDisconnect($GLOBALS["dblink"]);
 	
 	echo json_encode($entitycols);
 	echo '<br /><br />';

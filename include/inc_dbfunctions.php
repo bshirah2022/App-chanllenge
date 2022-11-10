@@ -12,7 +12,11 @@ $global_dbname = 'npdb';
 	}
 
 	function dbDisconnect($link){
-		mysqli_close($link);
+		try{
+			mysqli_close($link);
+		}catch(Exception $ex){
+			//no action needed
+		}
 	}
 	
 	function dbQuery($sql,$link){
