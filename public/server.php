@@ -22,6 +22,15 @@
 	    ),
 	    'example'=>'server.php?action=get_columns&tablename=team'
 	);
+	
+	$actions['check_password'] = array(
+	    'description' => 'check that a username and password match', 
+	    'required' => array(
+		'username' => 'username',
+		'password' => 'user password'
+	    ),
+	    'example'=>'server.php?action=check_password&username=wwood&password=nullpointers'
+	);
  
 	$colencode = 'server.php?action=get_rows&tablename=team&conditions='.urlencode('[{"col":"fname","op":"like","val":"%arre%"}]');
 	$actions['get_rows'] = array(
@@ -279,6 +288,21 @@ SQL;
 			}else{
 				echo '["failure"]';
 			}
+		}elseif($reqaction=="check_password"){
+			$logun = $_REQUEST['username'];
+			$logpw = $_REQUEST['password'];
+			
+			//check the password
+			$stmt = mysqli_prepare($link,"SELECT userid, username, email, firstname, lastname FROM user WHERE username=? AND password=? LIMIT 1");
+			mysqli_stmt_bind_param($stmt, 'ss', $logun, $logpw);
+			mysqli_stmt_execute($stmt);
+			$result = mysqli_stmt_get_result($stmt);
+			if(mysqli_num_rows($result)==1){
+				echo "[success]";
+			}else{
+				echo "[failure]";
+			}
+			
 		}elseif($reqaction=="upload"){
 			$fileinfo = ''.count($_FILES).': '.var_export($_FILES,true);
 			
