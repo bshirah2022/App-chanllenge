@@ -1,7 +1,7 @@
 <?php
+	require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_globals.php');
 	require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_dbfunctions.php');
 	require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_dbconnect.php');
-	require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_login.php');
 	header("Access-Control-Allow-Origin: *");
 	
 	$actions = array();
@@ -9,13 +9,16 @@
 	$actions['get_tables']['description'] = 'List all tables in the database.';
 	$actions['get_tables']['required'] = array();
 	
+	/*
 	$actions['get_tables'] = array(
 	    'description' => 'list all tables in the database', 
 	    'required' => array(
 	    ),
 	    'example'=>'server.php?action=get_tables'
 	);
+	*/
 	
+	/*
 	$actions['get_columns'] = array(
 	    'description' => 'list all columns in the specified table', 
 	    'required' => array(
@@ -26,7 +29,9 @@
 	    ),
 	    'example'=>'server.php?action=get_columns&tablename=team'
 	);
+	*/
 	
+	/*
 	$actions['register_user'] = array(
 	    'description' => 'register a new user account', 
 	    'required' => array(
@@ -51,7 +56,9 @@
 	    ),
 	    'example'=>'server.php?action=register_user&username=testuser&email=test@test.net&password=mypass123&firstname=test&lastname=user&phone=1-800-867-5309'
 	);
+	*/
 	
+	/*
 	$actions['check_password'] = array(
 	    'description' => 'check that a username and password match', 
 	    'required' => array(
@@ -64,7 +71,24 @@
 	    ),
 	    'example'=>'server.php?action=check_password&username=wwood&password=nullpointers'
 	);
+	*/
  
+	$actions['get_injury'] = array(
+	    'description' => 'get injury data', 
+	    'required' => array(
+	    ),
+	    'optional' => array(
+		'page'=>'which page/set of records to retrieve (default:1)',
+		'rowsperpage'=>'how many records to retrieve per page (default:10)',
+		'conditions'=>'pass one or more [col], [op], and [val] as query conditions. Allowed operations (op) include "=",">","<","like"'
+	    ),
+	    'samplevalues'=>array(
+		'page'=>'1',
+		'rowsperpage'=>'5',
+		'conditions'=>'[{"col":"State","op":"=","val":"NEW YORK"}]'
+	    )
+	);
+	
 	$colencode = 'server.php?action=get_rows&tablename=team&conditions='.urlencode('[{"col":"fname","op":"like","val":"%arre%"}]');
 	$actions['get_rows'] = array(
 	    'description' => 'get rows in the specified table', 
@@ -83,10 +107,10 @@
 		'conditions'=>'[{"col":"fname","op":"=","val":"Paul"}]'
 	    ),
 	     'example 1'=>'server.php?action=get_rows&tablename=team',
-	     'example 2'=>'server.php?action=get_rows&tablename=team&page=1&rowsperpage=2',
-	      'example 3'=>$colencode
+	     'example 2'=>'server.php?action=get_rows&tablename=team&page=1&rowsperpage=2'
 	);
 	
+	/*
 	//tablename, updates (col, val), conditions (col, op, val)
 	$uprowsencode1 = 'server.php?action=update_rows&tablename=team&updates='.urlencode('[{"col":"lname","val":"Word"}]').'&conditions='.urlencode('[{"col":"fname","op":"like","val":"%arre%"}]');
 	$uprowsencode2 = 'server.php?action=update_rows&tablename=team&updates='.urlencode('[{"col":"lname","val":"Wood"}]').'&conditions='.urlencode('[{"col":"lname","op":"=","val":"Word"}]');
@@ -141,7 +165,7 @@
 		'example 2: delete McConnell'=>$deleteencode2
 	);
 	
-	
+	*/
 	
 	if(isset($_REQUEST['action'])){
 	
@@ -234,6 +258,7 @@ WHERE $conditions
 $orderby
 LIMIT $record_start,$rowsperpage
 SQL;
+
 				$res = dbQuery($sql,$link);
 				while($row = mysqli_fetch_assoc($res)){
 					array_push($rows,$row);
@@ -244,6 +269,73 @@ SQL;
 			}catch(Exception $ex){
 				log_error($ex->getMessage());
 			}
+			
+		}elseif($reqaction=='get_injury'){
+			try{
+				$debugstr = '';
+				$rows = array();
+				$tablename = "injury";
+				$page = 1;
+				$rowsperpage = 10;
+				if(isset($_REQUEST['page'])){
+					$page = intval($_REQUEST['page']);
+				}
+				if(isset($_REQUEST['rowsperpage'])){
+					$rowsperpage =  intval($_REQUEST['rowsperpage']);
+				}
+				
+				$record_start=($page-1)*$rowsperpage;
+				
+				$conditions = 'TRUE';
+				if(isset($_REQUEST['conditions'])){
+					$cc = json_decode($_REQUEST['conditions'],true);
+					$debugstr = var_export($cc,true);
+					$allowed_conditions = ['=','>','<','like'];
+					$first = true;
+					
+					if(is_array($cc)){
+						foreach($cc as $condition){
+							if(in_array($condition['op'],$allowed_conditions)){
+								if($first){
+									$first=false;
+									$conditions='';
+									
+								}else{
+									$conditions.=' AND ';
+								}
+								$conditions.=$condition['col'].' '.$condition['op'].' "'.mysqli_real_escape_string($link,$condition['val']).'"';
+							}
+						}
+					}
+				}
+				
+				$orderby='';
+				if(isset($_REQUEST['orderby'])){
+					//allow alphanumeric, -, _, [space]
+					if(preg_match('/^[\w\-,\s]+$/',$_REQUEST['orderby'])){
+						$orderby=(' ORDER BY '.$_REQUEST['orderby']);
+					}
+				}
+				
+				
+				$sql=<<<SQL
+SELECT injury.*, injury_naics_codes.Industry FROM `injury`
+LEFT JOIN injury_naics_codes USING (NAICSCAT)
+WHERE $conditions
+$orderby
+LIMIT $record_start,$rowsperpage
+SQL;
+				$res = dbQuery($sql,$link);
+				while($row = mysqli_fetch_assoc($res)){
+					array_push($rows,$row);
+				}
+				echo json_encode($rows);
+				//echo '<br />'.json_encode($sql);
+				//echo '<br />'.$debugstr;
+			}catch(Exception $ex){
+				log_error($ex->getMessage());
+			}
+			
 		}elseif($reqaction=='update_rows'){
 			try{
 				$tablename = dbEscape($_REQUEST['tablename'],$link);
@@ -571,16 +663,7 @@ SQL;
 
 			
 		}
-		echo '<div style="background-color:#f8f8f8; border:2px solid black; margin-bottom:40px; border-radius:10px; padding:6px; padding-left:12px;">';
-		echo '<h2>File Upload</h2>';
-?>
-		<form enctype="multipart/form-data" method="post" action="/upload.php">
-			<input type="file" id="upfile" name="upfile"><br /><br />
-			<input type="hidden" name="action" value="upload">
-			<input type="submit" value="submit">
-		</form>
-<?
-		echo '</div>';
+
 		
 		
 		require_once($_SERVER['DOCUMENT_ROOT'].'/../include/inc_genericBodyEnd.php');
