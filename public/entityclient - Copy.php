@@ -38,7 +38,7 @@
 	$v_green_light = '#a4b585';
 	$v_green_lightest = '#e6eed8';
 	
-	$v_pagename = "Search";
+	$v_pagename = "Home";
 	$v_notice=null;
 	$v_errors = [];
 	
@@ -137,9 +137,7 @@
 				//var params = "action=get_tables";
 				
 				//action=get_rows&tablename=team&conditions=[{"col":"fname","op":"like","val":"%arre%"}]
-				var params = "action=get_injury";
-				params+="&page=1";
-				params+="&rowsperpage=10";
+				var params = "action=select";
 				/*
 				params+="&tablename=task";
 				params+="&conditions="+JSON.stringify([{
@@ -152,26 +150,9 @@
 					"request":"list_tasks"
 				};
 				
-				ajaxRequest('server.php',receiveServerResponse.bind(obj),params);
+				ajaxRequest('entityserver.php',receiveServerResponse.bind(obj),params);
 				
 			}
-			
-			var injuries=[];
-			var injOrder = [
-				"ID",
-				"EventDate",
-				"Employer",
-				"Address1",
-				"Address2",
-				"City",
-				"State",
-				"Zip",
-				"Inspection",
-				"Industry"
-			];
-			
-			var injFilters = [
-			];
 			
 			function receiveServerResponse(responseText){
 				lastResponse = responseText;
@@ -180,50 +161,10 @@
 				
 				
 				var obj = this;
-				
-				
-				
 				if(this["request"]=="list_tasks"){
 					var tasks = JSON.parse(responseText);
 					console.log("tasks:");
 					console.log(tasks);
-					
-					var divSearch = $g("searchlist");
-					injuries = JSON.parse(responseText);
-					
-					$empty(divSearch);
-					var tbl = $n("table",divSearch,"taskTable");
-					var thead=$n("thead",tbl);
-					var tr = $n("tr",thead);
-					for (var j=0; j<injOrder.length; j++){
-						var th = $n("th",tr);
-						$t(injOrder[j],th);
-						$n("br",th);
-						var mag = $n("span",th,"magnify");
-
-					}
-					
-					var tbody=$n("tbody",tbl);
-					for(var i=0; i<injuries.length; i++){
-						var injury = injuries[i];
-						var tr = $n("tr",tbody);
-						for (var j=0; j<injOrder.length; j++){
-							var col = injOrder[j];
-							var val = injury[col];
-							var td = $n("td",tr);
-							
-							if(col=="ID"){
-								var link = $n("a");
-								link.href="?id="+val;
-								td.appendChild(link);
-								$t(val,link);
-							}else{
-								$t(val,td);
-							}
-						}
-					}
-
-					
 					
 					var divTaskList = $g("tasklist");
 					if(tasks.length==0){
@@ -283,7 +224,6 @@
 				margin: 0;
 				background-color: #37451f;
 				background-image: linear-gradient(#37451f, #a4b585);
-				background-image: linear-gradient(#000000, #a4b585);
 			}
 			input{
 				-webkit-border-radius: 5px;
@@ -316,8 +256,7 @@
 			    margin: 0;
 			}
 			div.main{
-			    min-width: 900px;
-			    max-width:1500px;
+			    width: 900px;
 			    margin: 0 auto;
 			    position: relative;
 			    padding-top: 10px;
@@ -330,10 +269,7 @@
 			div.headerLogo{
 				float:left;
 				height:50px;
-				/*width:160px;*/
-				
-				color:white;
-				font-size:26px;
+				width:160px;
 			}
 			img.headerLogoImg{
 				border:0;
@@ -354,15 +290,6 @@
 				display:inline-block;
 				width:26px;
 				height:26px;
-			}
-			span.magnify{
-				background-image:url('img/magnify.svg');
-				display:inline-block;
-				width:25px;
-				height:25px;
-				background-size:cover;
-				cursor:pointer;
-
 			}
 			span.headerLoginTxt{
 				position:relative;
@@ -504,7 +431,7 @@
 				padding:10px;
 				min-height:250px;
 				<?php
-					echo "background-image:url('img/photo/injury2.jpg');";
+					echo "background-image:url('img/photo/path2.jpg');";
 					
 				?>
 				background-size:cover;
@@ -638,20 +565,79 @@
 			<div class="main">
 				<div class="headerBar">
 					<div class="headerLogo">
-						Severe Injury Search
+						<a href="/"><img src="img/nptranslogo.png" class="headerLogoImg" width="160" height="50" alt="logo"/></a>
 					</div>
 					<div class="headerLogin">
+						<form name="miniloginform" method="POST" action="client.php">
+							<div class="headerLoginImg"><!-- --></div>
+							<?php if($GLOBALS["user_loggedin"]){?>
+								<span class="headerLoginTxt"><?php echo $GLOBALS["user_username"] ?> (<a href="client.php?lo=1" class="lightLink">log out</a>)</span>
+							<?php } else { ?>
+								<input type="text" data-default="Username" class="inPreview inpLoginUser" id="logun" name="logun" value="Username" onfocus="inputGainedFocus(this)" onblur="inputLostFocus(this)" />
+								<input type="text" data-default="Password" value="Password" data-secure="1" class="inPreview inpLoginPass" id="logpw" name="logpw" onfocus="inputGainedFocus(this)" onblur="inputLostFocus(this)"  />
+								<input type="image" title="" id="inpLogSubmit" class="inpLogSubmit" src="img/lisubmit.png" onmouseover="this.src='img/lisubmit_darker.png'" onmouseout="this.src='img/lisubmit.png'" onmousedown="this.src='<img/lisubmit_darkest.png'" onmouseup="this.src='img/lisubmit.png'"/>
+							<?php } ?>
+
+						</form>
 					</div>
 				</div>
 				<div class="headerTabsBG">
 					<div class="htabLeft"><!-- --></div>
 					<div class="htabRight"><!-- --></div>
 					<div class="htabs">
-
+						<div class="outerhtab">
+							<div class="innerhtab"><a href="/" class="lightLink<?php if($v_pagename=="Home"){ echo " emph";}?>">Home</a></div>
+						</div>
+						<div class="tabsep"><!-- --></div>
+						<div class="outerhtab">
+							<div id="divpicvid" class="innerhtab">
+								<a href="/tab2/" id="piclink" class="lightLink<?php if($v_pagename=="Tab 2"){ echo " emph";}?>">Tab 2</a>
+							</div>
+						</div>
+						<div class="tabsep"><!-- --></div>
+						<div class="outerhtab">
+							<div class="innerhtab"><a href="/tab3/" class="lightLink<?php if($v_pagename=="Tab 3"){ echo " emph";}?>">Tab 3</a></div>
+						</div>
+						<div class="tabsep"><!-- --></div>
+						<div class="outerhtab">
+							<div class="innerhtab"><a href="/tab4/" class="lightLink<?php if($v_pagename=="Tab 4"){ echo " emph";}?>">Tab 4</a></div>
+						</div>
+						<div class="tabsep"><!-- --></div>
 					</div>
 				</div>
 				<div class="imgbanner" id="inbody_imgbanner"><!-- -->
 
+					<?php if(!$GLOBALS["user_loggedin"] && $v_notice==null){?>
+						<div class="registerbox">
+
+							<div class="registertip">
+								<div class="registernew">
+									<span class="registernewtxt">New around here?</span>
+								</div>
+								<div>
+									<span class="registertiptxt">Only registered users have access to selected content and features on this site. Create an account or log in to gain access.</span>
+								</div>
+							</div>
+							<div class="registerform">
+								<form name="miniregform" method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>">
+									<div class="relativereg">
+										<input data-default="First Name" type="text" class="inPreview reginput inpRegName" id="regfirst" name="regfirst" value="First Name" onfocus="inputGainedFocus(this)" onblur="inputLostFocus(this)" /><br />
+										<input data-default="Last Name" type="text" class="inPreview reginput inpRegName" id="reglast" name="reglast" value="Last Name" onfocus="inputGainedFocus(this)" onblur="inputLostFocus(this)" /><br />
+										<input data-default="Username" type="text" class="inPreview reginput inpRegUsername" id="regusername" name="regusername" value="Username" onfocus="inputGainedFocus(this)" onblur="inputLostFocus(this)" /><br />
+										<input data-default="Email Address" type="text" class="inPreview reginput inpRegEmail" id="regemail" name="regemail" value="Email Address" onfocus="inputGainedFocus(this)" onblur="inputLostFocus(this)" /><br />
+										
+										<input type="text" class="inPreview reginput" data-default="Password" data-secure="1" value="Password" id="regpw" name="regpw" onfocus="inputGainedFocus(this)" onblur="inputLostFocus(this)" /><br />
+										<!-- <input type="text" class="inPreview reginput inpRegPass" id="regpwprev" onfocus="regpwprevGainedFocus()" value="New Password" /><br /> -->
+										
+										<input type="text" class="inPreview reginput" data-default="Repeat Password" data-secure="1" value="Repeat Password" id="regpwrpt" name="regpw" onfocus="inputGainedFocus(this)" onblur="inputLostFocus(this)" /><br />
+										<!-- <input type="text" class="inPreview reginput inpRegPassRpt" id="regpwprevrpt" onfocus="regpwprevRptGainedFocus()" value="Repeat Password" /><br /> -->
+										
+										<input type="image" title="" id="inpRegSubmit" class="inpRegSubmit" src="img/casubmit.png" onmouseover="this.src='img/casubmit_darker.png'" onmouseout="this.src='img/casubmit.png'" onmousedown="this.src='img/casubmit_darkest.png'" onmouseup="this.src='img/casubmit.png'"/>
+									</div>
+								</form>
+							</div>
+						</div>
+					<?php } ?>
 					<?php if(count($v_errors)>0 || $v_notice!=null){ ?>
 						<div class="notifybox">
 							<?php
@@ -678,8 +664,14 @@
 				</div>
 				<div class="content">
 					<div style="padding:20px">
-						<div id="searchlist" class="searchlist">
-						</div>
+						<?php if($GLOBALS["user_loggedin"]){?>
+							My tasks:<br /><br />
+							<div id="tasklist" class="tasklist">
+							</div>
+						<?php }else{ ?>
+							Log in to view and add tasks!
+						
+						<?php } ?>
 					</div>
 				</div>
 			</div>
